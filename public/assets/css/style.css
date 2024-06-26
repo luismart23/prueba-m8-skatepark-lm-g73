@@ -1,0 +1,86 @@
+/* Estilos generales para el cuerpo de la página */
+body {
+    background-color: #ffdc43;
+    /* Fondo amarillo */
+    color: #4a4a4a;
+    /* Color de texto principal */
+    font-family: 'Helvetica Neue', sans-serif;
+    /* Fuente */
+    text-align: center;
+    /* Alineación del texto */
+    padding: 40px;
+    /* Espaciado interno */
+}
+
+/* Estilos para el navbar */
+.navbar {
+    background-color: #333;
+    /* Fondo negro */
+}
+
+.navbar-light .navbar-brand,
+.navbar-light .navbar-nav .nav-link {
+    color: #fff;
+    /* Color de texto blanco */
+}
+
+/* Estilos para el footer */
+.footer {
+    background-color: #333;
+    /* Fondo negro */
+    color: #fff !important;
+    /* Color de texto blanco */
+    padding: 20px 0;
+    /* Espaciado interno superior e inferior */
+}
+
+/* Estilos para los encabezados */
+h1 {
+    font-style: italic;
+    /* Estilo de fuente itálica para h1 */
+    color: #333;
+    /* Color de texto para h1 */
+}
+
+/* Estilos para celdas de tabla (td) y encabezados de tabla (th) */
+td,
+th {
+    vertical-align: middle;
+    /* Alineación vertical central */
+}
+
+/* Estilos específicos para divs dentro de celdas de tabla */
+td div {
+    width: 60px;
+    /* Ancho del div */
+    height: 60px;
+    /* Alto del div */
+    background-size: cover;
+    /* Imagen de fondo cubriendo completamente el div */
+}
+
+/* Estilos para filas específicas de la tabla */
+tbody tr:nth-child(1) td div {
+    background-image: url("/tony.jpg");
+    /* Imagen de fondo para la primera fila */
+}
+
+tbody tr:nth-child(2) td div {
+    background-image: url("/Evelien.jpg");
+    /* Imagen de fondo para la segunda fila */
+}
+
+tbody tr:nth-child(3) td div {
+    background-image: url("/Danny.jpg");
+    /* Imagen de fondo para la tercera fila */
+}
+
+/* Estilos para inputs */
+input {
+    text-align: center;
+    /* Alineación del texto dentro de inputs */
+    color: #333;
+    /* Color de texto para inputs */
+}
+
+/* Añadir estilos adicionales si es necesario */
