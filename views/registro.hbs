@@ -1,8 +1,9 @@
 {{! views/registro.hbs }}
 
+
 <div class="container">
     <h1>Registrar Skater</h1>
-    <form id="formularioRegistro" action="/registro" method="POST">
+    <form id="registroForm" enctype="multipart/form-data" method="POST" action="/api/v1/skater/registro">
         <div class="form-group">
             <label for="email">Correo Electrónico:</label>
             <input type="email" class="form-control" id="email" name="email" autocomplete="email" required>
@@ -34,4 +35,3 @@
         <button type="submit" class="btn btn-primary">Registrarse</button>
     </form>
 </div>
-<script src="/assets/js/registro.js"></script>
