@@ -1,11 +1,14 @@
-{{! views/participantes.hbs }}
+{{!-- views/participantes.hbs --}}
 
-<div class="container">
-    <h1>Perfil de Usuario</h1>
-    <form id="actualizarPerfilForm" onsubmit="updateSkater(event, '{{id}}')">
+{{#each skaters}}
+<div class="skater-profile">
+
+    <hr style="border-color: #000000; border-width: 2px; border-style: solid;">
+
+    <form id="rellenarFormularioSkater" onsubmit="updateSkater(event, '{{this.id}}');">
         <div class="form-group">
             <label for="nombre">Nombre:</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" value="{{nombre}}" required>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{{this.nombre}}" required>
         </div>
         <div class="form-group">
             <label for="password">Contraseña:</label>
@@ -18,31 +21,33 @@
         <div class="form-group">
             <label for="anos_experiencia">Años de Experiencia:</label>
             <input type="number" class="form-control" id="anos_experiencia" name="anos_experiencia"
-                value="{{anos_experiencia}}" required>
+                value="{{this.anos_experiencia}}" required>
         </div>
         <div class="form-group">
             <label for="especialidad">Especialidad:</label>
-            <input type="text" class="form-control" id="especialidad" name="especialidad" value="{{especialidad}}"
+            <input type="text" class="form-control" id="especialidad" name="especialidad" value="{{this.especialidad}}"
                 required>
         </div>
-        <!-- Otros campos del formulario -->
-        <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
     </form>
-    <button id="eliminarUsuario" class="btn btn-danger" onclick="confirmAndDelete('{{id}}')">Eliminar Skater</button>
+    <button class="btn btn-danger" onclick="confirmAndDelete('{{this.id}}')">Eliminar</button>
 </div>
+{{/each}}
 
 <script>
+    const URL_DOMAIN = '{{URL_DOMAIN}}';
+
     function confirmAndDelete(id) {
-        if (confirm('¿Estás seguro de que deseas eliminar tu perfil? Esta acción no se puede deshacer.')) {
+        if (confirm('¿Estás seguro de que deseas eliminar este skater? Esta acción no se puede deshacer.')) {
             deleteSkater(id); // Llamar a la función deleteSkater con el ID del skater
         }
     }
 
     function deleteSkater(id) {
-        axios.delete(`/api/v1/skater/${id}`)
+        axios.delete(`${URL_DOMAIN}/skater/${id}`)
             .then(response => {
                 alert('Skater eliminado correctamente');
-                window.location.href = '/'; // Redirigir al inicio o a otra página apropiada
+                window.location.reload(); // Recargar la página para ver los cambios actualizados
             })
             .catch(error => {
                 alert('Error al eliminar skater');
@@ -63,7 +68,7 @@
             especialidad: formData.get('especialidad')
         };
 
-        axios.put(`/api/v1/skater/${id}`, skaterData)
+        axios.put(`${URL_DOMAIN}/skater/${id}`, skaterData)
             .then(response => {
                 alert('Perfil actualizado correctamente');
                 window.location.reload(); // Recargar la página para ver los cambios actualizados

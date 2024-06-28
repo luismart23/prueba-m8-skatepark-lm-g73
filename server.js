@@ -11,7 +11,7 @@ import fileUpload from 'express-fileupload';
 import morgan from 'morgan';
 import renderRoutes from './routes/renderRoutes.js';
 import skaterRoutes from './routes/skaterRoutes.js';
-import { handleLogin, handleRegistro } from './controllers/skaterController.js'; // Importamos los controladores de skater
+
 
 dotenv.config();
 
@@ -47,13 +47,6 @@ app.use('/', renderRoutes);
 // Rutas /skater API
 app.use('/api/v1/skater', skaterRoutes);
 
-// Manejo de inicio de sesión
-app.post('/login', handleLogin);
-
-// Manejo de registro de skater
-app.post('/registro', handleRegistro);
-
-
 // Middleware para manejar errores 404 (no encontrado)
 app.use((req, res, next) => {
     res.status(404).render('404');
@@ -70,4 +63,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
-

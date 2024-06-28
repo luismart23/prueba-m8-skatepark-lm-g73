@@ -1,17 +1,20 @@
 // app.js
 
+
 document.addEventListener('DOMContentLoaded', () => {
     const skatersList = document.getElementById('skatersList');
     const formularioInicioSesion = document.getElementById('formularioInicioSesion');
     const rellenarFormularioSkater = document.getElementById('rellenarFormularioSkater');
     const registroForm = document.getElementById('registroForm');
     const eliminarUsuario = document.getElementById('eliminarUsuario');
+    const formularioActualizar = document.getElementById('formularioActualizar');
 
+    const URL_DOMAIN = "http://localhost:3000/api/v1";
 
     // Función para actualizar un skater por su ID
     const updateSkater = async (skaterId, data) => {
         try {
-            const response = await axios.put(`/api/v1/skater/${skaterId}`, data);
+            const response = await axios.put(`${URL_DOMAIN}/skater/${skaterId}`, data);
             if (response.status === 200) {
                 alert("Skater actualizado correctamente");
                 location.reload(); // Recargar la página después de la actualización
@@ -27,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para eliminar un skater por su ID
     const deleteSkater = async (skaterId) => {
         try {
-            const response = await axios.delete(`/api/v1/skater/${skaterId}`);
+            const response = await axios.delete(`${URL_DOMAIN}/skater/${skaterId}`);
             if (response.status === 200) {
                 alert("Skater eliminado correctamente");
                 location.reload(); // Recargar la página después de la eliminación
@@ -71,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await axios.post("/login", data);
+                const response = await axios.post(`${URL_DOMAIN}/skater/login`, data);
 
                 if (response.status === 200) {
                     const skater = response.data.skater; // Suponiendo que el servidor devuelve el skater al iniciar sesión
@@ -90,28 +93,18 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("El elemento 'formularioInicioSesion' no se encontró en el DOM.");
     }
 
+    // Obtener el formulario de actualización por su ID
     if (rellenarFormularioSkater) {
-        // Obtener los datos del skater desde el backend, asumiendo que ya están disponibles en la página renderizada
-        const skaterData = {
-            nombre: '{{nombre}}', // Reemplazar con el valor real renderizado por Handlebars
-            anos_experiencia: '{{anos_experiencia}}', // Reemplazar con el valor real renderizado por Handlebars
-            especialidad: '{{especialidad}}' // Reemplazar con el valor real renderizado por Handlebars
-            // Otros campos del formulario
-        };
-
-        // Rellenar los campos del formulario con los datos del skater
-        document.getElementById('nombre').value = skaterData.nombre;
-        document.getElementById('anos_experiencia').value = skaterData.anos_experiencia;
-        document.getElementById('especialidad').value = skaterData.especialidad;
-
-        // Agregar el evento de escucha para enviar el formulario
         rellenarFormularioSkater.addEventListener("submit", async (event) => {
             event.preventDefault();
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
 
             try {
-                // Realizar una solicitud PUT para actualizar los datos del skater
+                // Obtener el ID del skater desde el dataset del formulario
+                const skaterId = rellenarFormularioSkater.dataset.skaterId;
+
+                // Realizar una solicitud PUT para actualizar el skater
                 await updateSkater(skaterId, data);
             } catch (error) {
                 console.error("Error al actualizar el perfil:", error);
@@ -120,6 +113,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     } else {
         console.error("El elemento 'rellenarFormularioSkater' no se encontró en el DOM.");
+    }
+
+    if (formularioActualizar) {
+        formularioActualizar.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const skaterId = formularioActualizar.dataset.skaterId;
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                await updateSkater(skaterId, data);
+            } catch (error) {
+                console.error("Error al actualizar el perfil:", error);
+                alert("Hubo un error al actualizar el perfil.");
+            }
+        });
+    } else {
+        console.error("El elemento 'formularioActualizar' no se encontró en el DOM.");
     }
 
     if (registroForm) {
@@ -131,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // Realiza una solicitud POST para registrar un nuevo skater
-                const response = await axios.post('/api/v1/skater/registro', formData, {
+                const response = await axios.post(`${URL_DOMAIN}/skater/registro`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
