@@ -2,10 +2,10 @@
 
 <div class="container">
     <h1>Perfil de Usuario</h1>
-    <form id='rellenarFormularioSkater'>
+    <form id="actualizarPerfilForm" onsubmit="updateSkater(event, '{{id}}')">
         <div class="form-group">
             <label for="nombre">Nombre:</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" required>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{{nombre}}" required>
         </div>
         <div class="form-group">
             <label for="password">Contraseña:</label>
@@ -17,14 +17,60 @@
         </div>
         <div class="form-group">
             <label for="anos_experiencia">Años de Experiencia:</label>
-            <input type="number" class="form-control" id="anos_experiencia" name="anos_experiencia" required>
+            <input type="number" class="form-control" id="anos_experiencia" name="anos_experiencia"
+                value="{{anos_experiencia}}" required>
         </div>
         <div class="form-group">
             <label for="especialidad">Especialidad:</label>
-            <input type="text" class="form-control" id="especialidad" name="especialidad" required>
+            <input type="text" class="form-control" id="especialidad" name="especialidad" value="{{especialidad}}"
+                required>
         </div>
         <!-- Otros campos del formulario -->
         <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
     </form>
-    <button id="eliminarUsuario" class="btn btn-danger mt-3">Eliminar Usuario</button>
+    <button id="eliminarUsuario" class="btn btn-danger" onclick="confirmAndDelete('{{id}}')">Eliminar Skater</button>
 </div>
+
+<script>
+    function confirmAndDelete(id) {
+        if (confirm('¿Estás seguro de que deseas eliminar tu perfil? Esta acción no se puede deshacer.')) {
+            deleteSkater(id); // Llamar a la función deleteSkater con el ID del skater
+        }
+    }
+
+    function deleteSkater(id) {
+        axios.delete(`/api/v1/skater/${id}`)
+            .then(response => {
+                alert('Skater eliminado correctamente');
+                window.location.href = '/'; // Redirigir al inicio o a otra página apropiada
+            })
+            .catch(error => {
+                alert('Error al eliminar skater');
+                console.error(error);
+            });
+    }
+
+    function updateSkater(event, id) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+
+        const skaterData = {
+            nombre: formData.get('nombre'),
+            password: formData.get('password'),
+            repitaPassword: formData.get('repitaPassword'),
+            anos_experiencia: formData.get('anos_experiencia'),
+            especialidad: formData.get('especialidad')
+        };
+
+        axios.put(`/api/v1/skater/${id}`, skaterData)
+            .then(response => {
+                alert('Perfil actualizado correctamente');
+                window.location.reload(); // Recargar la página para ver los cambios actualizados
+            })
+            .catch(error => {
+                alert('Error al actualizar el perfil');
+                console.error(error);
+            });
+    }
+</script>

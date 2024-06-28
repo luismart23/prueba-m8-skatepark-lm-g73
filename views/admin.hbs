@@ -18,36 +18,18 @@
             </tr>
         </thead>
         <tbody>
+            {{#each skaters}}
             <tr>
-                <th scope="row">1</th>
+                <th scope="row">{{@index}}</th>
                 <td>
-                    <img src="/assets/img/tony.jpg" alt="Tony Hawk" width="50">
+                    <img src="{{foto}}" alt="{{nombre}}" width="50">
                 </td>
-                <td>Tony Hawk</td>
-                <td>12</td>
-                <td>Kickflip</td>
-                <td><input type="checkbox" checked /></td>
+                <td>{{nombre}}</td>
+                <td>{{anos_experiencia}}</td>
+                <td>{{especialidad}}</td>
+                <td><input type="checkbox" {{#if estado}}checked{{/if}} enable /></td>
             </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>
-                    <img src="/assets/img/evelien.jpg" alt="Evelien Bouilliart" width="50">
-                </td>
-                <td>Evelien Bouilliart</td>
-                <td>10</td>
-                <td>Heelflip</td>
-                <td><input type="checkbox" checked /></td>
-            </tr>
-            <tr>
-                <th scope="row">3</th>
-                <td>
-                    <img src="/assets/img/danny.jpg" alt="Danny Way" width="50">
-                </td>
-                <td>Danny Way</td>
-                <td>8</td>
-                <td>Ollie</td>
-                <td><input type="checkbox" /></td>
-            </tr>
+            {{/each}}
         </tbody>
     </table>
 </div>

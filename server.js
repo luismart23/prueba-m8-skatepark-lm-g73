@@ -1,5 +1,6 @@
 // server.js
 
+
 import express from 'express';
 import dotenv from 'dotenv';
 import { engine } from 'express-handlebars';
@@ -8,8 +9,9 @@ import path from 'path';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
 import morgan from 'morgan';
-import renderRoutes from './routes/renderRoutes.js'
+import renderRoutes from './routes/renderRoutes.js';
 import skaterRoutes from './routes/skaterRoutes.js';
+import { handleLogin, handleRegistro } from './controllers/skaterController.js'; // Importamos los controladores de skater
 
 dotenv.config();
 
@@ -18,7 +20,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Configura Handlebars como motor de plantillas
+// Configuración de Handlebars como motor de plantillas
 app.engine('.hbs', engine({ extname: '.hbs' }));
 app.set('view engine', '.hbs');
 app.set('views', path.join(__dirname, 'views'));
@@ -42,36 +44,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Rutas renderizadas con Handlebars
 app.use('/', renderRoutes);
 
-// Rutas /skater
+// Rutas /skater API
 app.use('/api/v1/skater', skaterRoutes);
 
-// Ejemplo en tu código de manejo de inicio de sesión
-app.post('/login', async (req, res, next) => {
-    // Lógica para verificar credenciales
-    if (usuarioAutenticado) {
-        // Establecer sesión u otros métodos de autenticación
-        req.session.user = user; // Ejemplo de establecimiento de sesión
-        res.redirect('/participantes'); // Redirigir a la página de participantes
-    } else {
-        res.status(401).json({ message: 'Credenciales inválidas' });
-    }
-});
+// Manejo de inicio de sesión
+app.post('/login', handleLogin);
 
-// Ejemplo en tu código de manejo de registro de skater
-app.post('/api/v1/skater/registro', async (req, res, next) => {
-    try {
-        // Lógica para crear un nuevo skater en la base de datos
-        await Skater.create(req.body); // Ejemplo simplificado
-
-        res.status(201).json({ message: 'Skater registrado exitosamente' });
-        // Puedes redirigir aquí si es necesario
-    } catch (error) {
-        console.error('Error al registrar skater:', error);
-        res.status(500).json({ message: 'Error al registrar skater' });
-    }
-});
-
-
+// Manejo de registro de skater
+app.post('/registro', handleRegistro);
 
 
 // Middleware para manejar errores 404 (no encontrado)
@@ -90,3 +70,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+

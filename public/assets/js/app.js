@@ -5,27 +5,57 @@ document.addEventListener('DOMContentLoaded', () => {
     const formularioInicioSesion = document.getElementById('formularioInicioSesion');
     const rellenarFormularioSkater = document.getElementById('rellenarFormularioSkater');
     const registroForm = document.getElementById('registroForm');
+    const eliminarUsuario = document.getElementById('eliminarUsuario');
 
+
+    // Función para actualizar un skater por su ID
+    const updateSkater = async (skaterId, data) => {
+        try {
+            const response = await axios.put(`/api/v1/skater/${skaterId}`, data);
+            if (response.status === 200) {
+                alert("Skater actualizado correctamente");
+                location.reload(); // Recargar la página después de la actualización
+            } else {
+                alert("Error al actualizar skater");
+            }
+        } catch (error) {
+            console.error("Error al actualizar el skater:", error);
+            alert("Hubo un error al actualizar el skater.");
+        }
+    }
+
+    // Función para eliminar un skater por su ID
+    const deleteSkater = async (skaterId) => {
+        try {
+            const response = await axios.delete(`/api/v1/skater/${skaterId}`);
+            if (response.status === 200) {
+                alert("Skater eliminado correctamente");
+                location.reload(); // Recargar la página después de la eliminación
+            } else {
+                alert("Error al eliminar skater");
+            }
+        } catch (error) {
+            console.error("Error al eliminar el skater:", error);
+            alert("Hubo un error al eliminar el skater.");
+        }
+    }
+
+    // Verificar si existe skatersList en el DOM
     if (skatersList) {
-        // Código para skatersList
+        // Obtener todos los checkboxes dentro de skatersList
         const checkboxes = skatersList.querySelectorAll("input[type='checkbox']");
 
+        // Iterar sobre cada checkbox para añadir un listener de cambio
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener("change", async (event) => {
-                const skaterId = event.target.dataset.skaterId;
+                const skaterId = event.target.dataset.skaterId; // Obtener el ID del skater desde el dataset del checkbox
 
                 try {
-                    const response = await axios.put(`/api/v1/skater/${skaterId}`);
-
-                    if (response.status === 200) {
-                        alert("Skater aprobado exitosamente");
-                        location.reload();
-                    } else {
-                        alert(response.data.message);
-                    }
+                    // Realizar una solicitud PUT para actualizar el skater
+                    await updateSkater(skaterId, { /* datos a enviar si es necesario */ });
                 } catch (error) {
-                    console.error("Error:", error);
-                    alert("Hubo un error al aprobar el skater.");
+                    console.error("Error al actualizar skater:", error);
+                    alert("Hubo un error al actualizar skater.");
                 }
             });
         });
@@ -44,38 +74,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await axios.post("/login", data);
 
                 if (response.status === 200) {
-                    window.location.href = "/participantes"; // Redirigir a la página de participantes si la autenticación es exitosa
+                    const skater = response.data.skater; // Suponiendo que el servidor devuelve el skater al iniciar sesión
+
+                    // Redirige a la página de participantes y muestra los datos del skater
+                    window.location.href = "/participantes";
                 } else {
                     alert(response.data.message); // Mostrar mensaje de error si la autenticación falla
                 }
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Error al iniciar sesión:", error);
                 alert("Hubo un error al iniciar sesión.");
             }
         });
-
-
     } else {
         console.error("El elemento 'formularioInicioSesion' no se encontró en el DOM.");
     }
 
     if (rellenarFormularioSkater) {
-        // Código para rellenarFormularioSkater
+        // Obtener los datos del skater desde el backend, asumiendo que ya están disponibles en la página renderizada
+        const skaterData = {
+            nombre: '{{nombre}}', // Reemplazar con el valor real renderizado por Handlebars
+            anos_experiencia: '{{anos_experiencia}}', // Reemplazar con el valor real renderizado por Handlebars
+            especialidad: '{{especialidad}}' // Reemplazar con el valor real renderizado por Handlebars
+            // Otros campos del formulario
+        };
+
+        // Rellenar los campos del formulario con los datos del skater
+        document.getElementById('nombre').value = skaterData.nombre;
+        document.getElementById('anos_experiencia').value = skaterData.anos_experiencia;
+        document.getElementById('especialidad').value = skaterData.especialidad;
+
+        // Agregar el evento de escucha para enviar el formulario
         rellenarFormularioSkater.addEventListener("submit", async (event) => {
             event.preventDefault();
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await axios.put("/api/v1/skater", data);
-
-                if (response.status === 200) {
-                    alert("Perfil actualizado exitosamente");
-                } else {
-                    alert(response.data.message);
-                }
+                // Realizar una solicitud PUT para actualizar los datos del skater
+                await updateSkater(skaterId, data);
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Error al actualizar el perfil:", error);
                 alert("Hubo un error al actualizar el perfil.");
             }
         });
@@ -84,50 +123,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (registroForm) {
-        registroForm.addEventListener('submit', async (event) => {
+        document.getElementById('registroForm').addEventListener('submit', async (event) => {
             event.preventDefault();
 
             const form = event.target;
             const formData = new FormData(form);
 
-            const file = formData.get('foto');
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = async () => {
-                const base64Image = reader.result.split(',')[1];
-
-                const data = {
-                    email: formData.get('email'),
-                    nombre: formData.get('nombre'),
-                    password: formData.get('password'),
-                    repitaPassword: formData.get('repitaPassword'),
-                    anos_experiencia: formData.get('anos_experiencia'),
-                    especialidad: formData.get('especialidad'),
-                    foto: base64Image // Enviar la imagen en base64
-                };
-
-                try {
-                    const response = await fetch('/api/v1/skater/registro', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data)
-                    });
-
-                    const result = await response.json();
-                    if (response.ok) {
-                        alert("Registro exitoso");
-                        window.location.href = "/login"; // Redirigir a la página de inicio de sesión
-                        // Puedes redirigir a cualquier página necesaria después del registro
-                    } else {
-                        alert(result.message);
+            try {
+                // Realiza una solicitud POST para registrar un nuevo skater
+                const response = await axios.post('/api/v1/skater/registro', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
                     }
-                } catch (error) {
-                    console.error("Error:", error);
-                    alert("Hubo un error al registrar el skater.");
+                });
+
+                if (response.status === 200) {
+                    alert("Registro exitoso");
+                    window.location.href = "/admin"; // Redirige a la página de administración después del registro
+                } else {
+                    alert(response.data.message || "Error al registrar skater.");
                 }
-            };
+            } catch (error) {
+                console.error("Error al registrar el skater:", error);
+                alert("Hubo un error al registrar el skater.");
+            }
         });
-    };
+    } else {
+        console.error("El elemento 'registroForm' no se encontró en el DOM.");
+    }
+
+    // Event listener para el botón de eliminar
+    if (eliminarUsuario) {
+        eliminarUsuario.addEventListener('click', function () {
+            if (confirm('¿Estás seguro de que deseas eliminar tu perfil? Esta acción no se puede deshacer.')) {
+                // Lógica para obtener dinámicamente el ID del skater según sea necesario
+                const skaterId = obtenerSkaterIdDinamicamente(); // Implementa esta función según tu lógica
+                deleteSkater(skaterId); // Llamar a la función deleteSkater con el ID del skater
+            }
+        });
+    } else {
+        console.error("El elemento 'eliminarUsuario' no se encontró en el DOM.");
+    }
 });
