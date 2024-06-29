@@ -19,5 +19,3 @@ INSERT INTO skaters (id, email, nombre, password, anos_experiencia, especialidad
 
 
 SELECT * FROM skaters;
-
-

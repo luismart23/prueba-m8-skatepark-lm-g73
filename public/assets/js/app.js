@@ -67,22 +67,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (formularioInicioSesion) {
-        // Código para formularioInicioSesion
         formularioInicioSesion.addEventListener("submit", async (event) => {
             event.preventDefault();
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
 
             try {
-                const response = await axios.post(`${URL_DOMAIN}/skater/login`, data);
+                const response = await axios.post(`${URL_DOMAIN}/api/v1/skater/login`, data);
 
                 if (response.status === 200) {
-                    const skater = response.data.skater; // Suponiendo que el servidor devuelve el skater al iniciar sesión
-
-                    // Redirige a la página de participantes y muestra los datos del skater
+                    const skater = response.data.skater;
                     window.location.href = "/participantes";
                 } else {
-                    alert(response.data.message); // Mostrar mensaje de error si la autenticación falla
+                    alert(response.data.message);
                 }
             } catch (error) {
                 console.error("Error al iniciar sesión:", error);
@@ -94,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Obtener el formulario de actualización por su ID
+
     if (rellenarFormularioSkater) {
         rellenarFormularioSkater.addEventListener("submit", async (event) => {
             event.preventDefault();

@@ -1,3 +1,5 @@
+// models/skaterModel.js
+
 import pool from '../config/db.js';
 
 const skaterModel = {
@@ -58,11 +60,11 @@ const skaterModel = {
 
     update: async (id, { nombre, password, anos_experiencia, especialidad }) => {
         const query = `
-            UPDATE skaters
-            SET nombre = $1, password = $2, anos_experiencia = $3, especialidad = $4
-            WHERE id = $5
-            RETURNING *;
-        `;
+      UPDATE skaters
+      SET nombre = $1, password = $2, anos_experiencia = $3, especialidad = $4
+      WHERE id = $5
+      RETURNING *;
+    `;
         const values = [nombre, password, anos_experiencia, especialidad, id];
         const { rows } = await pool.query(query, values);
         return rows[0];
@@ -84,3 +86,4 @@ const skaterModel = {
 };
 
 export default skaterModel;
+

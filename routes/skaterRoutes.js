@@ -1,5 +1,3 @@
-// skaterRoutes.js
-
 import { Router } from "express";
 import {
     getAllSkaters,
@@ -22,6 +20,7 @@ router.put('/:id', updateSkater); // Actualizar skater por ID
 router.post('/login', handleLogin); // Iniciar sesión
 
 export default router;
+
 
 
 

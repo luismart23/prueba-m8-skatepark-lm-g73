@@ -5,39 +5,54 @@ import { nanoid } from 'nanoid';
 import bcrypt from 'bcrypt';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { generateToken } from '../utils/jwt.js';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
 // Función para manejar el inicio de sesión
 export const handleLogin = async (req, res) => {
-    console.log("Llegó una solicitud POST a /login:", req.body); // Registro de la solicitud POST a /login
-
     try {
         const { email, password } = req.body;
 
-        // Busca al skater por email en la base de datos
+        if (!email || !password) {
+            console.error("Email y contraseña son obligatorios");
+            return res.status(400).json({ message: "Email y contraseña son obligatorios" });
+        }
+
         const skater = await skaterModel.findOneByEmail(email);
-
-        if (!skater) {
-            return res.status(404).json({ message: "Skater no encontrado" });
+        if (!skater || !(await bcrypt.compare(password, skater.password))) {
+            console.error("Email o contraseña incorrectos");
+            return res.status(401).json({ message: "Email o contraseña incorrectos" });
         }
 
-        // Compara la contraseña proporcionada con la almacenada en la base de datos
-        const passwordMatch = await bcrypt.compare(password, skater.password);
+        // Generar el accessToken en lugar del token
+        const accessToken = generateToken({
+            id: skater.id,
+            email: skater.email,
+            nombre: skater.nombre
+        });
 
-        if (!passwordMatch) {
-            return res.status(401).json({ message: "Credenciales inválidas" });
-        }
+        res.cookie('token', accessToken, {
+            httpOnly: true,
+            sameSite: 'strict',
+            maxAge: 7 * 60 * 60 * 1000  // 7 horas en milisegundos
+        });
 
-        // Si las credenciales son válidas, redirige al usuario a /participantes
+        // Redirección a la página de participantes después del inicio de sesión
         res.redirect('/participantes');
-
     } catch (error) {
-        console.error("Error en handleLogin:", error);
-        res.status(500).json({ message: "Hubo un problema al iniciar sesión" });
+        console.error("Error en el proceso de inicio de sesión:", error);
+        res.status(500).json({ message: "Error interno del servidor" });
     }
 };
+
+
 
 // Función para manejar el registro de un nuevo skater
 export const handleRegistro = async (req, res) => {
