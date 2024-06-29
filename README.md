@@ -214,6 +214,11 @@ Registrar un Skater
 bash
 Copiar código
 POST /registro
+
+## Ejemplo de que datos se ingresan para registrar un nuevo skater
+## En public/assets/img/ejemplo.jpg, estan todas las imagenes con cada nombre 
+## Usar esos mismos nombres para registrar skaters.
+
 {
   "email": "bam@skate.com",
   "nombre": "Bam",
@@ -224,6 +229,8 @@ POST /registro
   "foto":"/assets/img/bam.jpg",
   "estado": true
 }
+
+
 Ver la Página de Participantes (Protegida)
 bash
 Copiar código
