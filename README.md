@@ -47,6 +47,25 @@ CREATE TABLE skaters (
 - npm start
 - npm run dev
 
+## "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-fileupload": "^1.5.0",
+    "express-handlebars": "^7.1.3",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "nanoid": "^5.0.7",
+    "node-fetch": "^3.3.2",
+    "pg": "^8.12.0",
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+```
 El servidor se ejecutará en http://localhost:3000.
 
 ## MUY IMPORTANTE, PRESENTA LAG EN CARGAR EL DOM ASI QUE SI APARECEN ERRORES,
