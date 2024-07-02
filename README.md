@@ -42,6 +42,8 @@ CREATE TABLE skaters (
 ## DATABASE_URL=db_18_skaters_prueba_m8-g73_lm.sql
 ## JWT_SECRET_KEY=mi_clave_skatepark_lm_g73
 
+## EL TOKEN SE CREA SOLO AL INICIAR SESION 
+(no al regristrar).
 
 ## Inicia el servidor
 - npm start

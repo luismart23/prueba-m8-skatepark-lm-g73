@@ -10,10 +10,8 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 // Función para manejar el inicio de sesión
 export const handleLogin = async (req, res) => {
@@ -41,7 +39,7 @@ export const handleLogin = async (req, res) => {
         res.cookie('token', accessToken, {
             httpOnly: true,
             sameSite: 'strict',
-            maxAge: 7 * 60 * 60 * 1000  // 7 horas en milisegundos
+            maxAge: 1 * 60 * 60 * 1000, // 1 hora en milisegundos 
         });
 
         // Redirección a la página de participantes después del inicio de sesión
@@ -51,8 +49,6 @@ export const handleLogin = async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
-
-
 
 // Función para manejar el registro de un nuevo skater
 export const handleRegistro = async (req, res) => {
@@ -91,7 +87,7 @@ export const handleRegistro = async (req, res) => {
                 const hashedPassword = await bcrypt.hash(password, 10);
 
                 // Creación del nuevo skater
-                const newSkater = await skaterModel.create({
+                await skaterModel.create({
                     id: nanoid(), // Generar un ID único
                     email,
                     nombre,
@@ -115,22 +111,10 @@ export const handleRegistro = async (req, res) => {
     }
 };
 
-// Controlador para manejar la página de participantes
-export const participantes = async (req, res) => {
-    try {
-        const skaters = await skaterModel.findAll(); // Ajusta según el método específico en tu modelo
-        res.render('participantes', { skaters });
-    } catch (error) {
-        console.error("Error al obtener datos de skaters:", error);
-        res.status(500).send("Error interno del servidor");
-    }
-};
-
 // Controlador para manejar la página de administración
 export const handleAdmin = async (req, res) => {
     try {
         const skaters = await skaterModel.findAll();
-        console.log(skaters); // Verifica que se están obteniendo los datos
         res.render('admin', { skaters });
     } catch (error) {
         console.error("Error al obtener skaters para la página de administración:", error);
@@ -164,18 +148,25 @@ export const getSkater = async (req, res) => {
     }
 };
 
+// Función para actualizar un skater por su ID
 export const updateSkater = async (req, res) => {
     const { id } = req.params; // Obtén el ID del skater a actualizar
     const { nombre, password, repitaPassword, anos_experiencia, especialidad } = req.body; // Obtén los datos actualizados del skater
 
-    // Hash de la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10)
+    // Validaciones de contraseñas coincidentes
+    if (password !== repitaPassword) {
+        console.error("Las contraseñas no coinciden");
+        return res.status(400).json({ message: "Las contraseñas no coinciden" });
+    }
+
     try {
+        // Hash de la contraseña
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         // Actualiza el skater en la base de datos
         const updatedSkater = await skaterModel.update(id, {
             nombre,
             password: hashedPassword,
-            repitaPassword,
             anos_experiencia: parseInt(anos_experiencia),
             especialidad
         }, { new: true });
@@ -190,7 +181,6 @@ export const updateSkater = async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
-
 
 // Función para eliminar un skater por su ID
 export const removeSkater = async (req, res) => {

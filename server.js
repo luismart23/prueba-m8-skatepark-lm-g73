@@ -8,6 +8,7 @@ import renderRoutes from './routes/renderRoutes.js';
 import skaterRoutes from './routes/skaterRoutes.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import fileUpload from 'express-fileupload';  // Asegúrate de importar express-fileupload
 import { verifyToken } from './utils/jwt.js';
 
 dotenv.config();
@@ -25,12 +26,38 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Middleware para servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'archivos')));  // Asegúrate de que esta línea sea correcta si usas `archivos` para almacenar fotos
 
 // Middleware para parsear JSON y datos de formulario
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Configuración del middleware de carga de archivos
+app.use(fileUpload({
+    limits: { fileSize: 5000000 }, // Tamaño máximo de archivo: 5 MB
+    abortOnLimit: true,
+    responseOnLimit: "El peso del archivo que intentas subir supera el límite permitido.",
+}));
+
+// Ruta de prueba para manejar archivos (opcional, puedes eliminarla si no es necesaria)
+app.post("/", (req, res) => {
+    if (!req.files || !req.files.foto) {
+        return res.status(400).send("No se ha recibido ningún archivo.");
+    }
+
+    const { foto } = req.files;
+    const uploadPath = path.join(__dirname, 'archivos', foto.name);  // Ruta para guardar el archivo
+
+    foto.mv(uploadPath, (err) => {
+        if (err) {
+            return res.status(500).send("Error al guardar el archivo: " + err.message);
+        }
+        res.send("Archivo cargado con éxito");
+    });
+});
+
+// Middleware para verificar el token de autenticación
 app.use((req, res, next) => {
     const token = req.cookies.token;
     if (token) {
@@ -43,7 +70,6 @@ app.use((req, res, next) => {
     }
     next();
 });
-
 
 // Middleware para manejar rutas relacionadas con skaters
 app.use('/api/v1/skater', skaterRoutes);

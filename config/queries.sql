@@ -12,7 +12,7 @@ CREATE TABLE skaters (
     estado BOOLEAN NOT NULL
 );
 
--- seedesr
+-- seeders
 INSERT INTO skaters (id, email, nombre, password, anos_experiencia, especialidad, foto, estado) VALUES 
 ('1','luis@skate.com', 'Luis Martinez', 'luis123', 7, 'Kickflip', 'assets/img/luis.jpg', true); 
 
