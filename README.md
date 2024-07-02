@@ -43,7 +43,7 @@ CREATE TABLE skaters (
 ## JWT_SECRET_KEY=mi_clave_skatepark_lm_g73
 
 ## EL TOKEN SE CREA SOLO AL INICIAR SESION 
-(no al regristrar).
+(no al registrar).
 
 ## Inicia el servidor
 - npm start
